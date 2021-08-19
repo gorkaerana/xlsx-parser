@@ -1,0 +1,14 @@
+xlsx-parser notebook -*- mode: org -*-
+#+STARTUP: hidestars indent
+
+* How data is stored in .xlsx files
+** A .xlsx file is a zipped folder containing multiple .xml files
+*** Data for each sheet is contained in "xl/worksheets/sheet{n}.xml" (with integer n)
+**** Within each of those files tabular data is in header ~sheetData~
+***** Each row is contained in subheader ~row~
+****** The value of each cell in sub-subheader ~v~
+* [0/1] simple Python xlsx parser
+** TODO [0/3] figure out how to extract different data types
+*** TODO string
+*** TODO date
+*** TODO bool
