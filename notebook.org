@@ -4,11 +4,17 @@ xlsx-parser notebook -*- mode: org -*-
 * How data is stored in .xlsx files
 ** A .xlsx file is a zipped folder containing multiple .xml files
 *** Data for each sheet is contained in "xl/worksheets/sheet{n}.xml" (with integer n)
-**** Within each of those files tabular data is in header ~sheetData~
-***** Each row is contained in subheader ~row~
-****** The value of each cell in sub-subheader ~v~
-* [0/1] simple Python xlsx parser
+**** Within each of those files tabular data is under tag ~sheetData~
+***** Each row is contained under tag ~row~
+****** The value of each cell under tag ~v~, in attribute ~text~
+*** The sheet names displayed in Microsoft Excel are contained in 'xl/workbook.xml'
+**** Tag ~sheets~
+***** The information of each sheet under tag ~sheet~
+****** Attribute ~name~ contains the name displayed in Excel
+****** Attribute ~id~ contains the integer n [[*Data for each sheet is contained in "xl/worksheets/sheet{n}.xml" (with integer n)][above]]
+* [1/2] simple Python xlsx parser
 ** TODO [0/3] figure out how to extract different data types
 *** TODO string
 *** TODO date
 *** TODO bool
+** DONE implement scraping the sheet the name of which is given
