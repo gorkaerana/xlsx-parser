@@ -15,10 +15,11 @@ PREFIXES = {
           'officeDocument/2006/relationships}')
     }
 
+
 def find_files_containing_string(filepath, string):
     """
-    I couldn't quite inmediately figure out how to grep within the 
-    files contained in a zipped directory using the UNIX command 
+    I couldn't quite inmediately figure out how to grep within the
+    files contained in a zipped directory using the UNIX command
     line. So I wrote this method.
     """
     matches_per_file = {}
@@ -55,29 +56,14 @@ def find_sheet_id_given_name(filepath, sheet_name):
     )
 
 
-def parse_xlsx(filepath, sheet_name=None):
+def extract_table_from_xml_file(zip_filepath, xml_filepath):
     """
-    Parses the tabular data contained in sheet 'sheet_name' of .xlsx
-    file saved in 'filepath'.
-    Arguments:
-    filepath
-    sheet_name
-
-    Output:
-    table
     """
     table = []
-    # The sheet_name -> sheet_id mapping ought to be extracted from
-    # 'xl/workbook.xml'
-    if sheet_name is None:
-        sheet_id = '1'
-    else:
-        sheet_id = find_sheet_id_given_name(filepath, sheet_name)
-    xml_filepath = f"xl/worksheets/sheet{sheet_id}.xml"
-    # The data is contained under tag 'sheetData' and the values of
-    # the cells of each row under tag 'row'
-    with ZipFile(filepath, 'r') as zip_file:
+    with ZipFile(zip_filepath, 'r') as zip_file:
         with zip_file.open(xml_filepath) as xml_file:
+            # The data is contained under tag 'sheetData' and the
+            # values of the cells of each row under tag 'row'
             sheet_data = ET.parse(xml_file)\
                            .getroot()\
                            .find(f"{PREFIXES['xmlns']}sheetData")\
@@ -91,6 +77,27 @@ def parse_xlsx(filepath, sheet_name=None):
                         row_values.append(value.text)
                 table.append(row_values)
     return table
+
+def parse_xlsx(filepath, sheet_name=None):
+    """
+    Parses the tabular data contained in sheet 'sheet_name' of .xlsx
+    file saved in 'filepath'.
+    Arguments:
+    filepath
+    sheet_name
+
+    Output:
+    table
+    """
+    # The sheet_name -> sheet_id mapping ought to be extracted from
+    # 'xl/workbook.xml'
+    if sheet_name is None:
+        sheet_id = '1'
+    else:
+        sheet_id = find_sheet_id_given_name(filepath, sheet_name)
+    xml_filepath = f"xl/worksheets/sheet{sheet_id}.xml"
+    # The table data is to be extracted from xml_filepath
+    return extract_table_from_xml_file(filepath, xml_filepath)
 
 
 if __name__ == '__main__':
